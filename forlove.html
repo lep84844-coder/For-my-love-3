@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Do You Love Me? 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--neon:#ff0077}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;overflow-x:hidden;font-family:'Quicksand',Arial,sans-serif;background:radial-gradient(circle,#41132f,#100817);color:#fff;user-select:none;-webkit-user-select:none}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.screen{display:none;position:relative;z-index:2;width:100%;margin:auto;padding:20px;text-align:center;flex-direction:column;align-items:center}
+.screen.on{display:flex}
+.glass{max-width:420px;padding:28px 24px;border-radius:24px;background:rgba(18,5,25,.75);backdrop-filter:blur(14px);border:1px solid rgba(255,0,128,.25);box-shadow:0 8px 32px rgba(255,0,100,.3)}
+.neon{color:var(--neon);text-shadow:0 0 10px var(--neon),0 0 25px var(--neon),0 0 45px var(--neon)}
+h1{margin:0 0 12px;font-size:clamp(26px,7vw,38px)}
+p{margin:0 0 18px}
+.sub{color:#f7b9d9;font-size:15px}
+.big{font-size:56px;margin-bottom:10px;animation:bob 1s infinite alternate}
+@keyframes bob{to{transform:translateY(-10px)}}
+button{border:none;border-radius:30px;padding:12px 24px;margin:5px;background:linear-gradient(45deg,#ff3c9e,#a92bff);color:#fff;font:700 17px 'Quicksand',Arial,sans-serif;cursor:pointer;box-shadow:0 0 15px #ff3c9e66}
+button:hover{filter:brightness(1.15)}
+#btnArea{position:relative;height:90px;width:100%;display:flex;justify-content:center;align-items:center;gap:14px}
+#noBtn{background:#2a2430;color:#ccc;box-shadow:none;border:1px solid #666;transition:left .15s,top .15s;z-index:30}
+.pixel{font-family:'Press Start 2P',cursive;font-size:clamp(28px,9vw,64px);margin:0 0 28px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.6}}
+#heartSvg{width:clamp(130px,35vw,200px);fill:var(--neon);cursor:pointer;animation:beat 1.2s infinite ease-in-out}
+@keyframes beat{50%{transform:scale(1.2)}0%,100%{transform:scale(1)}}
+.tag{background:#0009;border:1px solid #ff007766;padding:10px 24px;border-radius:30px;margin:26px 0 0;font-weight:700}
+.ghost{background:#ff007733;border:1px solid #ff007788;box-shadow:none;font-size:14px}
+
+/* LETTER */
+.envelope{position:relative;width:min(300px,80vw);height:190px;margin:200px auto 45px;background:#e879b0;border-radius:8px;perspective:900px;cursor:pointer;filter:drop-shadow(0 15px 25px #0008)}
+.back{position:absolute;inset:0;background:#d85c98;border-radius:8px}
+.letter{position:absolute;z-index:2;left:5%;top:10%;width:90%;height:85%;padding:16px 14px;background:#fff8ed;color:#8c3563;border-radius:5px;transition:transform 1s,height 1s;overflow:hidden;display:flex;flex-direction:column;text-align:left}
+.letter h2{font-family:Georgia,serif;margin:0 0 8px;font-size:20px;text-align:center}
+.letter textarea{flex:1;width:100%;border:none;outline:none;resize:none;background:transparent;color:#63304c;font:15px/1.6 Georgia,serif}
+.front{position:absolute;inset:0;z-index:4;background:#e879b0;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);border-radius:8px}
+.flap{position:absolute;z-index:5;inset:0 0 auto;height:60%;background:#ffafd4;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .8s}
+.heart{position:absolute;z-index:6;top:45%;left:50%;transform:translate(-50%,-50%);font-size:35px;transition:opacity .3s}
+.envelope.open .flap{transform:rotateX(180deg);z-index:1}
+.envelope.open .heart{opacity:0}
+.envelope.open .letter{transform:translateY(-170px);height:300px;z-index:7}
+#hearts{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:10}
+.fh{position:absolute;bottom:-40px;animation:fly 4s linear forwards}
+@keyframes fly{0%{transform:translateY(0) rotate(0) scale(.7);opacity:0}15%{opacity:1}100%{transform:translateY(-110vh) rotate(360deg) scale(1.4);opacity:0}}
+
+/* FX PICKER */
+#fxBar{position:fixed;top:max(12px,env(safe-area-inset-top));right:12px;z-index:50;display:flex;gap:6px}
+#fxBar select{background:#000a;color:#f7b9d9;border:1px solid #ff007788;border-radius:20px;padding:6px 10px;font:600 12px 'Quicksand',Arial,sans-serif}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="hearts"></div>
+<div id="fxBar">
+  <select id="mode">
+    <option value="matrix">Love Matrix</option>
+    <option value="rain">Mưa trái tim</option>
+    <option value="fireworks">Pháo hoa</option>
+    <option value="snow">Tuyết trái tim</option>
+  </select>
+  <select id="color">
+    <option value="#ff0077">Hồng</option>
+    <option value="#00f0ff">Xanh</option>
+    <option value="#ff2200">Đỏ</option>
+    <option value="#a855f7">Tím</option>
+    <option value="#eab308">Vàng</option>
+  </select>
+</div>
+
+<!-- 1: câu hỏi -->
+<div id="s1" class="screen on">
+  <div class="glass">
+    <div class="big">💖</div>
+    <h1 class="neon">Em có iu a ko?</h1>
+    <p class="sub">Trả lời thật lòng đi nhé, không thoát được đâu! </p>
+    <div id="btnArea">
+      <button id="yesBtn">CÓ! 💕</button>
+      <button id="noBtn">Không 😜</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2: trái tim -->
+<div id="s2" class="screen">
+  <h1 class="pixel neon">Yêu e =))</h1>
+  <svg id="heartSvg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+  <p class="tag">oki</p>
+  <button id="toLetter">💌 Mở thư</button>
+  <button id="again" class="ghost">↩ Chơi lại</button>
+</div>
+
+<!-- 3: lá thư -->
+<div id="s3" class="screen">
+  <p>✨ Lời cảm ơn của Anh&lt;3 ✨</p>
+  <h1 class="neon">Gửi bạn một lá thư 💌</h1>
+  <p class="sub">Nhấn vào phong bì để mở nhé!</p>
+  <div class="envelope" id="envelope">
+    <div class="back"></div>
+    <div class="letter">
+      <h2>Gửi người thương 💗</h2>
+      <textarea id="message" readonly>For you Chau Anh,
+
+Anh chả có tiền cũng chả nghĩ được món quà gì cho người con gái của anh, nên anh chỉ dành lời chúc qua đây: mong em ngày càng xinh đẹp hơn, mong em vui trong ngày lễ này.
+
+Đây là văn A.I đấy =))
+
+Dear Chau Anh 💗</textarea>
+    </div>
+    <div class="front"></div>
+    <div class="flap"></div>
+    <div class="heart">❤️</div>
+  </div>
+  <div>
+    <button id="openBtn">💌 Mở thư</button>
+    <button id="closeBtn">💔 Đóng thư</button>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const show = id => { document.querySelectorAll('.screen').forEach(s => s.classList.remove('on')); $(id).classList.add('on'); };
+
+/* ---------- Màn 1: nút "Không" né ---------- */
+const noBtn = $('noBtn');
+let dodge = 0;
+function dodgeNo(e){
+  if (e) e.preventDefault();
+  if (++dodge > 8) return accept();
+  const pad = 20;
+  const x = pad + Math.random() * Math.max(0, innerWidth - noBtn.offsetWidth - pad*2);
+  const y = pad + Math.random() * Math.max(0, innerHeight - noBtn.offsetHeight - pad*2);
+  Object.assign(noBtn.style, {position:'fixed', left:x+'px', top:y+'px'});
+  if (dodge === 3) noBtn.textContent = 'Chắc chưa? 😜';
+  if (dodge === 5) noBtn.textContent = 'Đố bắt được! 🚀';
+  if (dodge === 7) noBtn.textContent = 'Chọn CÓ đi! 🥺';
+}
+noBtn.addEventListener('mouseenter', dodgeNo);
+noBtn.addEventListener('click', dodgeNo);
+noBtn.addEventListener('touchstart', dodgeNo, {passive:false});
+
+function accept(){ show('s2'); burst(); }
+$('yesBtn').addEventListener('click', accept);
+
+function resetAll(){
+  dodge = 0;
+  Object.assign(noBtn.style, {position:'', left:'', top:''});
+  noBtn.textContent = 'Không 😜';
+  closeLetter();
+  show('s1');
+}
+$('again').addEventListener('click', resetAll);
+$('toLetter').addEventListener('click', () => show('s3'));
+$('heartSvg').addEventListener('click', burst);
+
+/* ---------- Màn 3: lá thư ---------- */
+const env = $('envelope');
+let isOpen = false;
+function openLetter(){
+  if (isOpen) return;
+  isOpen = true;
+  env.classList.add('open');
+  $('openBtn').textContent = '💖 Đã mở thư';
+  floatHearts(25);
+}
+function closeLetter(){
+  isOpen = false;
+  env.classList.remove('open');
+  $('openBtn').textContent = '💌 Mở thư';
+}
+function floatHearts(n){
+  for (let i = 0; i < n; i++){
+    const h = document.createElement('span');
+    h.className = 'fh';
+    h.textContent = ['💗','💖','💕','✨'][Math.floor(Math.random()*4)];
+    h.style.left = Math.random()*100 + 'vw';
+    h.style.fontSize = 15 + Math.random()*25 + 'px';
+    h.style.animationDuration = 3 + Math.random()*3 + 's';
+    $('hearts').appendChild(h);
+    h.addEventListener('animationend', () => h.remove());
+  }
+}
+env.addEventListener('click', openLetter);
+$('openBtn').addEventListener('click', openLetter);
+$('closeBtn').addEventListener('click', closeLetter);
+setInterval(() => { if (isOpen) floatHearts(2); }, 1000);
+
+/* ---------- Hiệu ứng nền (canvas) ---------- */
+const cv = $('fx'), ctx = cv.getContext('2d');
+let mode = 'matrix', color = '#ff0077', P = [];
+
+function mk(b){
+  return {
+    x: Math.random()*cv.width,
+    y: b ? cv.height/2 : Math.random()*cv.height,
+    s: Math.random()*18 + 12,
+    vx: (Math.random()-.5)*(b ? 8 : 2),
+    vy: b ? (Math.random()-.5)*8 : Math.random()*1.5 + .5,
+    a: Math.random()*.8 + .2,
+    r: Math.random()*6.28,
+    rs: (Math.random()-.5)*.05
+  };
+}
+function init(){ P = []; for (let i = 0; i < 60; i++) P.push(mk()); }
+function burst(){ for (let i = 0; i < 35; i++) P.push(mk(true)); }
+function resize(){ cv.width = innerWidth; cv.height = innerHeight; init(); }
+addEventListener('resize', resize);
+
+$('mode').addEventListener('change', e => { mode = e.target.value; init(); });
+$('color').addEventListener('change', e => {
+  color = e.target.value;
+  document.documentElement.style.setProperty('--neon', color);
+});
+
+function draw(){
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (mode === 'matrix'){
+    ctx.save();
+    ctx.font = '12px "Press Start 2P", monospace';
+    ctx.fillStyle = color;
+    ctx.globalAlpha = .25;
+    ctx.rotate(-.2);
+    const t = Date.now()*.05, rows = Math.ceil(cv.height/24) + 10, cols = Math.ceil(cv.width/180) + 5;
+    for (let r = -5; r < rows; r++)
+      for (let c = -5; c < cols; c++)
+        ctx.fillText('LOVE YOU LOVE YOU ', c*180 + (r%2 ? 0 : 30) - 100, r*28 + (t % 28));
+    ctx.restore();
+  } else {
+    P.forEach((p, i) => {
+      if (mode === 'rain'){ p.y += p.vy*2; }
+      if (mode === 'snow'){ p.y += p.vy; p.x += Math.sin(p.y*.02)*1.5; p.r += p.rs; }
+      if (mode === 'fireworks'){ p.x += p.vx; p.y += p.vy; p.a -= .008; }
+      if (mode === 'fireworks' ? p.a <= 0 : p.y > cv.height + 30){
+        P[i] = mk(mode === 'fireworks');
+        if (mode !== 'fireworks') P[i].y = -20;
+        return;
+      }
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.a);
+      ctx.translate(p.x, p.y);
+      if (mode === 'snow') ctx.rotate(p.r);
+      ctx.font = p.s + 'px sans-serif';
+      ctx.fillText({rain:'💖', snow:'❄️❤️', fireworks:'✨💗'}[mode], 0, 0);
+      ctx.restore();
+    });
+  }
+  requestAnimationFrame(draw);
+}
+resize();
+draw();
+</script>
+</body>
+</html>
